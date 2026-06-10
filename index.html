@@ -20,9 +20,9 @@
       </button>
       <nav class="dock" id="main-menu" aria-label="Navigasi">
         <button type="button" data-view="swat">Kondisi komunitas</button>
-        <button type="button" disabled aria-disabled="true">Target pembinaan</button>
+        <button type="button" data-view="roadmap">Arah 1 tahun</button>
         <button type="button" disabled aria-disabled="true">Peran penggerak</button>
-        <button type="button" disabled aria-disabled="true">Arah 1 tahun</button>
+        <button type="button" disabled aria-disabled="true">Target pembinaan</button>
       </nav>
     </header>
 
@@ -40,20 +40,20 @@
             <strong>Baca kondisi komunitas</strong>
             <small>Mulai dari hal yang sudah kuat, yang perlu dirapikan, peluang gerak, dan risiko.</small>
           </button>
-          <button class="path-card primary-card locked-card" type="button" disabled aria-disabled="true">
+          <button class="path-card primary-card" type="button" data-view="roadmap">
             <span>02</span>
+            <strong>Arah 1 tahun</strong>
+            <small>Baca rencana gerak per 3 bulan agar komunitas tumbuh bertahap.</small>
+          </button>
+          <button class="path-card locked-card" type="button" disabled aria-disabled="true">
+            <span>03</span>
             <strong>Peran penggerak</strong>
             <small>Lihat pembagian peran, jumlah ideal, dan prioritas saat ada amanah ganda.</small>
           </button>
           <button class="path-card locked-card" type="button" disabled aria-disabled="true">
-            <span>03</span>
+            <span>04</span>
             <strong>Masuk target pembinaan</strong>
             <small>Fokus satu target per layar, lengkap dengan alasan jumlah dan langkah lanjut.</small>
-          </button>
-          <button class="path-card locked-card" type="button" disabled aria-disabled="true">
-            <span>04</span>
-            <strong>Arah 1 tahun</strong>
-            <small>Baca rencana gerak per 3 bulan agar komunitas tumbuh bertahap.</small>
           </button>
         </div>
       </section>
@@ -68,7 +68,7 @@
           </div>
         </div>
         <div class="swat-reader" id="swat-grid"></div>
-        <button class="continue-btn" type="button" data-view="targets">Lanjut ke target</button>
+        <button class="continue-btn" type="button" data-view="roadmap">Lanjut ke arah 1 tahun</button>
       </section>
 
       <section class="screen targets-screen" id="screen-targets" aria-label="Target dan alasan jumlah">

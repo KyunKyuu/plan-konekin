@@ -301,7 +301,7 @@ function renderRoadmap() {
         <strong>${phase.title}</strong>
         <small>${phase.focus}</small>
       </span>
-      <span class="roadmap-count">${phase.targets.length} target</span>
+      <span class="roadmap-count">${phase.programs.length} fokus</span>
     </button>
   `).join("");
 
@@ -327,14 +327,18 @@ function renderRoadmapDetail() {
     </header>
       <div class="roadmap-body">
         <section>
-          <h4>Target komunitas</h4>
+          <h4>Program utama</h4>
           <div class="roadmap-targets">
-            ${phase.targets.map((target) => `<span>${target.name} <b>${target.amount}</b></span>`).join("")}
+            ${phase.programs.map((program) => `<span>${program}</span>`).join("")}
           </div>
         </section>
         <section>
-          <h4>Indikator selesai</h4>
-          <p>${phase.done}</p>
+          <h4>Prioritas gerak</h4>
+          ${phase.priorities.map((priority) => `<p>${priority}</p>`).join("")}
+        </section>
+        <section>
+          <h4>Target akhir triwulan</h4>
+          ${phase.outcomes.map((outcome) => `<p>${outcome}</p>`).join("")}
         </section>
         <section>
           <h4>Jika meleset</h4>
@@ -345,56 +349,83 @@ function renderRoadmapDetail() {
 }
 
 function buildRoadmap() {
-  const targets = state.data.targets;
-  const byStage = (...stages) => targets.filter((target) => stages.includes(target.stage));
-  const pick = (ids) => ids.map((id) => findTarget(id)).filter(Boolean);
-
   return [
     {
-      period: "Bulan 1-3",
-      title: "Fondasi data dan sumber target",
-      focus: "Merapikan data awal, membuka kontak baru, dan memastikan pipeline tidak kosong sebelum masuk pembinaan.",
-      targets: [...byStage("Mapping", "Momentum"), ...pick(["pesmas", "lpk"])],
-      done: "Daftar nama sudah punya status jelas: belum kontak, sudah kontak, respons, siap lanjut, atau ditahan.",
-      fallback: "Jika data belum cukup, kurangi target konversi sementara dan tambah gelombang pencarian nama baru."
+      period: "Triwulan 1",
+      title: "Merapikan internal",
+      focus: "Tiga bulan pertama dipakai untuk membenahi pengurus, komunikasi, jobdesk, data awal, ritme laporan, dan jadwal basecamp.",
+      programs: ["Forum pengurus rutin", "Penegasan jobdesk", "Mapping masalah jabatan", "Data member awal", "Laporan katim", "Agenda basecamp"],
+      priorities: [
+        "Rapat pengurus 2 minggu sekali dengan laporan singkat dari tiap jabatan: progres, kendala, siapa yang perlu dibantu, dan rencana 2 minggu berikutnya.",
+        "Setiap jabatan punya tugas utama, target kerja 3 bulan, batas wewenang, alur laporan, dan indikator sederhana.",
+        "Sekretaris mulai memegang data member, mapping, rekap kehadiran, dan dokumentasi keputusan."
+      ],
+      outcomes: [
+        "Semua pengurus tahu tugas utamanya.",
+        "Forum komunikasi pengurus berjalan.",
+        "Data awal member tersedia.",
+        "Katim mulai aktif menghubungi member.",
+        "Basecamp mulai punya jadwal tetap."
+      ],
+      fallback: "Jika pengurus belum stabil, kurangi jumlah agenda luar dan fokuskan energi pada rapat rutin, jobdesk, data member, dan laporan katim."
     },
     {
-      period: "Bulan 4-6",
-      title: "Konversi ke kehadiran dan forum awal",
-      focus: "Mengubah nama yang sudah respons menjadi hadir di forum awal seperti BBQ, IS, Pesmas, atau proses seleksi HK.",
-      targets: [...byStage("Akuisisi", "Seleksi", "Program"), ...pick(["bbq", "is-1", "hk"])],
-      done: "Target tidak hanya tercatat, tetapi mulai hadir, bisa dihubungi ulang, dan punya PIC follow-up.",
-      fallback: "Jika kehadiran rendah, pecah forum menjadi kelompok kecil dan fokus pada nama yang responsnya paling hangat."
+      period: "Triwulan 2",
+      title: "Menghidupkan katim dan member",
+      focus: "Setelah internal mulai rapi, fokus bergerak ke katim, member pasif, bonding per tim, update data, dan aktivasi prajurit.",
+      programs: ["Penguatan katim", "Bonding per tim", "Pendekatan member pasif", "Update data member", "Basecamp rutin", "Aktivasi prajurit"],
+      priorities: [
+        "Katim dilatih membuka pembicaraan, mengajak tanpa memaksa, membaca member aktif/pasif/potensial, dan melaporkan kondisi member.",
+        "Setiap katim menghubungi semua member minimal 1 kali per bulan dan membuat agenda bonding kecil minimal 1 kali per bulan.",
+        "Data member diupdate minimal 1 bulan sekali berdasarkan laporan katim."
+      ],
+      outcomes: [
+        "Setiap katim punya mapping member.",
+        "Member pasif mulai terhubung kembali.",
+        "Ada agenda kecil per tim.",
+        "Muncul beberapa member potensial untuk diberi amanah."
+      ],
+      fallback: "Jika katim belum bergerak, kecilkan target agenda dan mulai dari kontak personal paling mudah: member yang sudah respons, dekat, atau pernah aktif."
     },
     {
-      period: "Bulan 7-9",
-      title: "Penguatan pembinaan dan struktur",
-      focus: "Mendorong target yang sudah hadir agar masuk proses pembinaan, naik tahap, dan mendapat pendamping yang jelas.",
-      targets: [...byStage("Pembinaan", "Tarbiyah", "Kepemimpinan", "Struktur")],
-      done: "Setiap peserta kunci punya mentor, jadwal, dan status lanjut yang bisa dievaluasi tiap pekan.",
-      fallback: "Jika mentor kurang, turunkan jumlah target aktif dan prioritaskan kandidat yang paling stabil hadir."
+      period: "Triwulan 3",
+      title: "Event besar dan perluasan gerak",
+      focus: "Ketika member mulai hidup, komunitas bisa membuat event besar sebagai momentum bonding, kaderisasi, dan perluasan jangkauan.",
+      programs: ["Event besar", "Camping member", "Panitia campuran", "Marketing atau sales", "Aktivasi PH/PG", "Amanah kecil member"],
+      priorities: [
+        "Event besar dibuat sebagai alat untuk mengaktifkan member dan memperkuat struktur, bukan sekadar acara ramai.",
+        "Setelah event, data kehadiran dicatat, peserta dikelompokkan, katim menghubungi ulang, dan peserta potensial diberi amanah kecil.",
+        "Evaluasi event dilakukan maksimal 1 minggu setelah acara agar momentum tidak hilang."
+      ],
+      outcomes: [
+        "Event besar terlaksana.",
+        "Member lebih terikat.",
+        "Ada kader baru yang mulai terlihat.",
+        "Marketing mulai lebih hidup.",
+        "Struktur tidak hanya diisi pengurus inti."
+      ],
+      fallback: "Jika event besar belum siap, ubah menjadi gathering kecil atau upgrading terbatas, tetapi tetap wajib ada data kehadiran dan tindak lanjut."
     },
     {
-      period: "Bulan 10-12",
-      title: "Stabilisasi komunitas dan keberlanjutan",
-      focus: "Menjaga keuangan, keamanan, kolektor, dan kerja pendukung agar semua target yang sudah bergerak tidak turun lagi.",
-      targets: [...byStage("Keuangan", "Keamanan", "Operasi", "Ekspansi")],
-      done: "Ada penggerak yang memegang laporan, keuangan, keamanan, dan follow-up sehingga kerja tidak bergantung pada satu orang.",
-      fallback: "Jika banyak peran kosong, gabungkan tugas sementara dan pilih prioritas: pembinaan rutin, data aktif, lalu perluasan."
+      period: "Triwulan 4",
+      title: "Evaluasi, regenerasi, dan budaya",
+      focus: "Akhir tahun dipakai untuk membaca hasil 1 tahun, memperbaiki budaya komunikasi, dan menyiapkan keberlanjutan.",
+      programs: ["Evaluasi pengurus", "Evaluasi data member", "Regenerasi", "Budaya komunikasi", "Rencana tahun berikutnya"],
+      priorities: [
+        "Evaluasi kinerja pengurus, data member, program yang berhasil, dan program yang gagal.",
+        "Siapkan kader atau pengurus berikutnya dari member yang sudah terlihat aktif dan stabil.",
+        "Perbaiki budaya komunikasi supaya tahun berikutnya tidak dimulai dari nol."
+      ],
+      outcomes: [
+        "Tim punya data perkembangan 1 tahun.",
+        "Terlihat siapa pengurus yang aktif dan kurang aktif.",
+        "Terlihat member yang bisa dikader.",
+        "Budaya komunikasi lebih sehat.",
+        "Program tahun berikutnya tidak dimulai dari nol."
+      ],
+      fallback: "Jika evaluasi belum lengkap, prioritaskan tiga data inti: pengurus aktif, member potensial, dan program yang paling berdampak."
     }
-  ].map((phase) => ({
-    ...phase,
-    targets: dedupeTargets(phase.targets)
-  }));
-}
-
-function dedupeTargets(targets) {
-  const seen = new Set();
-  return targets.filter((target) => {
-    if (!target || seen.has(target.id)) return false;
-    seen.add(target.id);
-    return true;
-  });
+  ];
 }
 
 function renderMapping() {
