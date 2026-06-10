@@ -1,0 +1,322 @@
+{
+  "meta": {
+    "title": "Peta Kerja Operasi",
+    "group": "Versi Kelompok",
+    "period": "Draft Perencanaan",
+    "summary": "Dashboard presentasi catatan kerja, target tahapan operasi, dan reasoning prioritas."
+  },
+  "swat": {
+    "headline": "Analisis SWAT Kelompok",
+    "note": "SWAT di sini dipakai sebagai versi praktis: Strength, Weakness, Action, Threat. Fokusnya bukan teori panjang, tapi membaca posisi kelompok lalu menentukan operasi yang bisa langsung dikerjakan.",
+    "items": [
+      {
+        "label": "Strength",
+        "title": "Basis kader dan ritme binaan sudah ada",
+        "body": "Ada modal relasi, forum, dan pengalaman lapangan. Ini bisa dipakai untuk mempercepat mapping target tanpa mulai dari nol."
+      },
+      {
+        "label": "Weakness",
+        "title": "Data belum seragam antar tahapan",
+        "body": "Beberapa target masih bergantung pada ingatan personal. Perlu format pantauan yang sama supaya progres tidak hilang saat pergantian petugas."
+      },
+      {
+        "label": "Action",
+        "title": "Prioritaskan target yang membuka jalur berikutnya",
+        "body": "Target yang berdampak domino seperti HK, KRM, dan tarbiyah ditempatkan sebagai node pengungkit, bukan sekadar checklist."
+      },
+      {
+        "label": "Threat",
+        "title": "Operasi melemah jika follow-up lambat",
+        "body": "Jeda panjang antara kontak, asistensi, dan eksekusi membuat potensi turun. Setiap tahapan butuh pemilik dan batas waktu kecil."
+      }
+    ]
+  },
+  "targets": [
+    {
+      "id": "iga",
+      "name": "Target IGA",
+      "stage": "Mapping",
+      "amount": 18,
+      "progress": 42,
+      "priority": "high",
+      "owner": "Tim Data",
+      "reasoning": "IGA menjadi pintu awal untuk membaca sebaran potensi. Target dibuat cukup besar agar pipeline tidak kosong ketika masuk tahap follow-up.",
+      "next": "Validasi nama, status kontak, dan jalur pendekatan."
+    },
+    {
+      "id": "idu",
+      "name": "Target IDU",
+      "stage": "Mapping",
+      "amount": 14,
+      "progress": 36,
+      "priority": "medium",
+      "owner": "Koordinator Area",
+      "reasoning": "IDU dipakai untuk memperkuat daftar calon yang butuh pendekatan lebih personal sebelum masuk operasi lanjutan.",
+      "next": "Kelompokkan berdasarkan kedekatan relasi dan ketersediaan waktu."
+    },
+    {
+      "id": "isat",
+      "name": "Target ISAT",
+      "stage": "Akuisisi",
+      "amount": 11,
+      "progress": 54,
+      "priority": "high",
+      "owner": "Tim Lapangan",
+      "reasoning": "ISAT diprioritaskan karena punya dampak cepat terhadap penambahan basis aktif.",
+      "next": "Buat agenda follow-up mingguan dan catat respons."
+    },
+    {
+      "id": "wisuda",
+      "name": "Target Wisuda",
+      "stage": "Momentum",
+      "amount": 22,
+      "progress": 28,
+      "priority": "medium",
+      "owner": "Tim Event",
+      "reasoning": "Momentum wisuda memberi alasan natural untuk kontak ulang, apresiasi, dan penguatan hubungan.",
+      "next": "Siapkan daftar nama dan skrip komunikasi yang hangat."
+    },
+    {
+      "id": "wj",
+      "name": "Target WJ",
+      "stage": "Pembinaan",
+      "amount": 9,
+      "progress": 61,
+      "priority": "high",
+      "owner": "Mentor",
+      "reasoning": "WJ perlu dijaga karena biasanya dekat dengan kesiapan komitmen dan bisa menjadi penghubung target baru.",
+      "next": "Tentukan indikator kesiapan dan jadwal pendamping."
+    },
+    {
+      "id": "wi-wz",
+      "name": "Penambahan WI WZ",
+      "stage": "Ekspansi",
+      "amount": 8,
+      "progress": 47,
+      "priority": "medium",
+      "owner": "Wawan",
+      "reasoning": "Data yang sudah dipegang Wawan perlu ditarik menjadi daftar kerja bersama agar tidak berhenti di satu orang.",
+      "next": "Konsolidasi data Wawan ke format target bersama."
+    },
+    {
+      "id": "jpi-jpz",
+      "name": "JPI JPZ",
+      "stage": "Ekspansi",
+      "amount": 10,
+      "progress": 33,
+      "priority": "medium",
+      "owner": "Tim Jejaring",
+      "reasoning": "JPI dan JPZ berfungsi memperluas jejaring target sekaligus membuka akses area yang belum kuat.",
+      "next": "Pilih dua kontak penghubung dan ukur peluangnya."
+    },
+    {
+      "id": "hk",
+      "name": "Target HK Mahasiswa",
+      "stage": "Seleksi",
+      "amount": 16,
+      "progress": 45,
+      "priority": "high",
+      "owner": "Tim Kampus",
+      "reasoning": "HK dibatasi mahasiswa agar fokus dan indikatornya jelas. Ini mengurangi target kabur dan membuat pendekatan lebih spesifik.",
+      "next": "Filter hanya mahasiswa aktif dan beri status minat."
+    },
+    {
+      "id": "dp-ph",
+      "name": "Penambahan DP atau PH",
+      "stage": "Struktur",
+      "amount": 6,
+      "progress": 25,
+      "priority": "high",
+      "owner": "Koordinator",
+      "reasoning": "DP atau PH dibutuhkan untuk memperkuat daya eksekusi. Tanpa tambahan peran, beban follow-up akan menumpuk.",
+      "next": "Cari kandidat yang stabil hadir dan siap memegang area kecil."
+    },
+    {
+      "id": "dm-pg",
+      "name": "Penambahan DM atau PG",
+      "stage": "Struktur",
+      "amount": 5,
+      "progress": 31,
+      "priority": "medium",
+      "owner": "Koordinator",
+      "reasoning": "DM atau PG melengkapi struktur pembinaan agar operasi tidak hanya ramai di awal tapi lemah di kontrol.",
+      "next": "Tentukan kriteria minimal dan pasangan mentor."
+    },
+    {
+      "id": "krm",
+      "name": "Target KRM Kapten",
+      "stage": "Kepemimpinan",
+      "amount": 7,
+      "progress": 58,
+      "priority": "critical",
+      "owner": "Kapten",
+      "reasoning": "KRM sebagai kapten menjadi titik pengali. Jika kuat, ritme tim lain ikut naik karena ada komando lapangan.",
+      "next": "Buat daftar calon kapten dan uji tanggung jawab kecil."
+    },
+    {
+      "id": "hk-t1",
+      "name": "Target HK ke Tarbiyah 1",
+      "stage": "Tarbiyah",
+      "amount": 12,
+      "progress": 40,
+      "priority": "critical",
+      "owner": "Mentor T1",
+      "reasoning": "Perpindahan HK ke Tarbiyah 1 adalah konversi penting dari ketertarikan menuju proses rutin.",
+      "next": "Pasangkan setiap HK dengan pengajak dan jadwal awal."
+    },
+    {
+      "id": "bina-t2",
+      "name": "Target Bina ke Tarbiyah 2",
+      "stage": "Tarbiyah",
+      "amount": 9,
+      "progress": 52,
+      "priority": "high",
+      "owner": "Mentor T2",
+      "reasoning": "Naik ke Tarbiyah 2 menunjukkan stabilitas pembinaan, bukan sekadar kehadiran pertama.",
+      "next": "Audit keaktifan dan hambatan tiap binaan."
+    },
+    {
+      "id": "sjp",
+      "name": "Target SJP",
+      "stage": "Program",
+      "amount": 13,
+      "progress": 37,
+      "priority": "medium",
+      "owner": "Tim Program",
+      "reasoning": "SJP menjadi kanal aktivitas yang bisa menyatukan target dari berbagai jalur agar lebih mudah dipantau.",
+      "next": "Buat paket kegiatan dan indikator hadir."
+    },
+    {
+      "id": "is-1",
+      "name": "IS 1",
+      "stage": "Program",
+      "amount": 10,
+      "progress": 49,
+      "priority": "medium",
+      "owner": "Tim IS",
+      "reasoning": "IS 1 dipakai sebagai tahap pemanasan sebelum masuk proses yang lebih intens.",
+      "next": "Susun batch peserta dan penanggung jawab per batch."
+    },
+    {
+      "id": "pesmas",
+      "name": "Target Pesmas",
+      "stage": "Program",
+      "amount": 15,
+      "progress": 44,
+      "priority": "medium",
+      "owner": "Tim Pesmas",
+      "reasoning": "Pesmas membantu membuka kontak baru dengan pendekatan layanan, sehingga hambatan awal lebih rendah.",
+      "next": "Pilih tema yang relevan dan daftar calon peserta."
+    },
+    {
+      "id": "bbq",
+      "name": "Target BBQ",
+      "stage": "Program",
+      "amount": 20,
+      "progress": 35,
+      "priority": "high",
+      "owner": "Tim BBQ",
+      "reasoning": "BBQ efektif untuk pembiasaan rutin dan membangun kedekatan yang lebih natural.",
+      "next": "Bagi kelompok kecil dan kunci jadwal tetap."
+    },
+    {
+      "id": "bi",
+      "name": "Penambahan BI",
+      "stage": "Ekspansi",
+      "amount": 6,
+      "progress": 23,
+      "priority": "medium",
+      "owner": "Tim Ekspansi",
+      "reasoning": "BI ditambahkan untuk memperluas variasi jalur masuk dan mengurangi ketergantungan pada satu sumber target.",
+      "next": "Cek calon dari relasi aktif dan arsip kegiatan."
+    },
+    {
+      "id": "zp-infis",
+      "name": "ZP Infis",
+      "stage": "Operasi",
+      "amount": 8,
+      "progress": 46,
+      "priority": "medium",
+      "owner": "Tim ZP",
+      "reasoning": "ZP Infis perlu target terukur agar operasi tidak sekadar wacana dan bisa dievaluasi tiap pekan.",
+      "next": "Tetapkan daftar pendek dan indikator selesai."
+    },
+    {
+      "id": "zp-st",
+      "name": "ZP ST",
+      "stage": "Operasi",
+      "amount": 8,
+      "progress": 41,
+      "priority": "medium",
+      "owner": "Tim ZP",
+      "reasoning": "ZP ST berjalan paralel dengan Infis, sehingga perlu dibedakan targetnya agar tidak saling tumpang tindih.",
+      "next": "Pisahkan PIC dan laporan progres mingguan."
+    },
+    {
+      "id": "mal-kolektor",
+      "name": "Petugas Mal Kolektor",
+      "stage": "Keuangan",
+      "amount": 4,
+      "progress": 63,
+      "priority": "high",
+      "owner": "Bendahara",
+      "reasoning": "Petugas kolektor memperkuat disiplin keuangan dan mengurangi risiko pencatatan tertunda.",
+      "next": "Tentukan wilayah tagih dan format laporan singkat."
+    },
+    {
+      "id": "asistensi-kolektor",
+      "name": "Asistensi Kolektor",
+      "stage": "Keuangan",
+      "amount": 6,
+      "progress": 55,
+      "priority": "medium",
+      "owner": "Bendahara",
+      "reasoning": "Asistensi membuat kolektor baru tidak berjalan sendiri dan menurunkan kesalahan pencatatan.",
+      "next": "Buat pairing senior-junior selama dua pekan."
+    },
+    {
+      "id": "o1",
+      "name": "O1",
+      "stage": "Operasi",
+      "amount": 11,
+      "progress": 38,
+      "priority": "medium",
+      "owner": "Tim Operasi",
+      "reasoning": "O1 menjadi satuan kerja ringkas untuk menguji respons cepat sebelum target diperbesar.",
+      "next": "Definisikan output O1 dan deadline kecil."
+    },
+    {
+      "id": "tarkam",
+      "name": "Tarkam Tarbiyah Keamanan",
+      "stage": "Keamanan",
+      "amount": 5,
+      "progress": 34,
+      "priority": "critical",
+      "owner": "Tim Keamanan",
+      "reasoning": "Keamanan tarbiyah memastikan proses berjalan stabil, tertib, dan tidak mudah terganggu.",
+      "next": "Mapping risiko forum dan buat protokol sederhana."
+    },
+    {
+      "id": "lpk",
+      "name": "Target LPK",
+      "stage": "Program",
+      "amount": 9,
+      "progress": 29,
+      "priority": "medium",
+      "owner": "Tim LPK",
+      "reasoning": "LPK berperan sebagai jalur penguatan kompetensi dan komitmen peserta.",
+      "next": "Tentukan tema pelatihan dan calon peserta prioritas."
+    },
+    {
+      "id": "keuangan",
+      "name": "Aktif Keuangan",
+      "stage": "Keuangan",
+      "amount": 18,
+      "progress": 57,
+      "priority": "high",
+      "owner": "Bendahara",
+      "reasoning": "Aktif keuangan menjadi indikator kesehatan operasi. Target ini menjaga semua program punya dukungan real.",
+      "next": "Segmentasi kontributor, status aktif, dan pola reminder."
+    }
+  ]
+}

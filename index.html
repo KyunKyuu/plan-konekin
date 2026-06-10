@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Komunitas Konek.in</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <button class="brand" type="button" data-view="menu" aria-label="Kembali ke awal">
+        <span class="brand-mark"></span>
+        <span>Konek.in</span>
+      </button>
+      <button class="menu-toggle" type="button" id="menu-toggle" aria-expanded="false" aria-controls="main-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+        <strong>Menu</strong>
+      </button>
+      <nav class="dock" id="main-menu" aria-label="Navigasi">
+        <button type="button" data-view="swat">Kondisi komunitas</button>
+        <button type="button" disabled aria-disabled="true">Target pembinaan</button>
+        <button type="button" disabled aria-disabled="true">Peran penggerak</button>
+        <button type="button" disabled aria-disabled="true">Arah 1 tahun</button>
+      </nav>
+    </header>
+
+    <main class="reader-shell">
+      <section class="screen menu-screen active" id="screen-menu" aria-label="Pembuka laporan">
+        <div class="intro-block">
+          <p class="eyebrow" id="period">Rencana Komunitas</p>
+          <h1 id="page-title"><span class="community-title">Komunitas</span><span class="konek-title">Konek.in</span></h1>
+          <p id="summary">Catatan komunitas untuk membaca kondisi, menetapkan target, dan menjaga alur pembinaan.</p>
+        </div>
+
+        <div class="read-path" aria-label="Alur baca">
+          <button class="path-card" type="button" data-view="swat">
+            <span>01</span>
+            <strong>Baca kondisi komunitas</strong>
+            <small>Mulai dari hal yang sudah kuat, yang perlu dirapikan, peluang gerak, dan risiko.</small>
+          </button>
+          <button class="path-card primary-card locked-card" type="button" disabled aria-disabled="true">
+            <span>02</span>
+            <strong>Peran penggerak</strong>
+            <small>Lihat pembagian peran, jumlah ideal, dan prioritas saat ada amanah ganda.</small>
+          </button>
+          <button class="path-card locked-card" type="button" disabled aria-disabled="true">
+            <span>03</span>
+            <strong>Masuk target pembinaan</strong>
+            <small>Fokus satu target per layar, lengkap dengan alasan jumlah dan langkah lanjut.</small>
+          </button>
+          <button class="path-card locked-card" type="button" disabled aria-disabled="true">
+            <span>04</span>
+            <strong>Arah 1 tahun</strong>
+            <small>Baca rencana gerak per 3 bulan agar komunitas tumbuh bertahap.</small>
+          </button>
+        </div>
+      </section>
+
+      <section class="screen swat-screen" id="screen-swat" aria-label="Analisis SWAT">
+        <div class="screen-head">
+          <button class="back-btn" type="button" data-view="menu">Kembali</button>
+          <div>
+            <p class="eyebrow">Bagian 01</p>
+            <h2 id="swat-title">Analisis SWAT Kelompok</h2>
+            <p id="swat-note"></p>
+          </div>
+        </div>
+        <div class="swat-reader" id="swat-grid"></div>
+        <button class="continue-btn" type="button" data-view="targets">Lanjut ke target</button>
+      </section>
+
+      <section class="screen targets-screen" id="screen-targets" aria-label="Target dan alasan jumlah">
+        <div class="screen-head">
+          <button class="back-btn" type="button" data-view="menu">Kembali</button>
+          <div>
+            <p class="eyebrow">Bagian 02</p>
+            <h2>Target pembinaan</h2>
+            <p>Pilih salah satu target. Kalau ingin membaca dari awal, tekan mulai dari target pertama.</p>
+          </div>
+        </div>
+
+        <button class="filter-toggle" type="button" id="filter-toggle" aria-expanded="false" aria-controls="target-filter">
+          <span></span>
+          <span></span>
+          <span></span>
+          <strong>Cari / urutkan</strong>
+        </button>
+        <div class="reader-controls" id="target-filter">
+          <label class="search-box">
+            <span>Cari target</span>
+            <input id="search" type="search" placeholder="Ketik IGA, HK, keuangan..." />
+          </label>
+          <label class="sort-box">
+            <span>Urutkan</span>
+            <select id="sort">
+              <option value="priority">Urutan utama</option>
+              <option value="amount">Jumlah target</option>
+              <option value="progress">Progres</option>
+              <option value="stage">Tahapan</option>
+            </select>
+          </label>
+        </div>
+
+        <button class="continue-btn start-first" type="button" id="start-first-target">Mulai dari target pertama</button>
+        <div class="target-menu" id="target-list" aria-label="Menu target"></div>
+      </section>
+
+      <section class="screen target-read-screen" id="screen-target-read" aria-label="Baca target">
+        <div class="screen-head compact-head">
+          <button class="back-btn" type="button" data-view="targets">Daftar target</button>
+        </div>
+        <article class="target-reader" id="target-reader" aria-live="polite"></article>
+        <p class="swipe-hint">Geser kiri atau kanan untuk pindah target.</p>
+        <div class="reader-actions">
+          <button class="nav-btn prev-btn" type="button" id="prev-target"><span>Kembali</span><strong>Target sebelumnya</strong></button>
+          <span id="target-count">0 / 0</span>
+          <button class="nav-btn next-btn" type="button" id="next-target"><span>Lanjut</span><strong>Target berikutnya</strong></button>
+        </div>
+      </section>
+
+      <section class="screen mapping-screen" id="screen-mapping" aria-label="Peran penggerak">
+        <div class="screen-head">
+          <button class="back-btn" type="button" data-view="menu">Kembali</button>
+          <div>
+            <p class="eyebrow">Bagian 03</p>
+            <h2>Peran penggerak</h2>
+            <p>Supaya target komunitas bisa tercapai, tiap penggerak perlu tahu perannya, jumlah idealnya, dan prioritas saat merangkap amanah.</p>
+          </div>
+        </div>
+        <div class="mission-tabs" id="mission-tabs" aria-label="Pilih fokus penggerak"></div>
+        <div class="mapping-summary" id="mapping-summary"></div>
+        <div class="mapping-list" id="mapping-list"></div>
+      </section>
+
+      <section class="screen roadmap-screen" id="screen-roadmap" aria-label="Arah 1 tahun">
+        <div class="screen-head">
+          <button class="back-btn" type="button" data-view="menu">Kembali</button>
+          <div>
+            <p class="eyebrow">Bagian 04</p>
+            <h2>Arah 1 tahun</h2>
+            <p>Rencana ini dibagi per 3 bulan agar pertumbuhan komunitas bergerak bertahap: dari data, kedekatan, pembinaan, sampai stabilisasi.</p>
+          </div>
+        </div>
+        <div class="roadmap-list" id="roadmap-list"></div>
+      </section>
+
+      <section class="screen roadmap-detail-screen" id="screen-roadmap-detail" aria-label="Detail arah 1 tahun">
+        <div class="screen-head compact-head">
+          <button class="back-btn" type="button" data-view="roadmap">Arah 1 tahun</button>
+        </div>
+        <article class="roadmap-detail" id="roadmap-detail"></article>
+      </section>
+    </main>
+
+    <script src="./data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
