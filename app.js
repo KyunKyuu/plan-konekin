@@ -59,7 +59,10 @@ const els = {
   mappingSummary: document.querySelector("#mapping-summary"),
   mappingList: document.querySelector("#mapping-list"),
   roadmapList: document.querySelector("#roadmap-list"),
-  roadmapDetail: document.querySelector("#roadmap-detail")
+  roadmapDetail: document.querySelector("#roadmap-detail"),
+  prevRoadmap: document.querySelector("#prev-roadmap"),
+  nextRoadmap: document.querySelector("#next-roadmap"),
+  roadmapCount: document.querySelector("#roadmap-count")
 };
 
 const officerMapping = [
@@ -261,6 +264,8 @@ function bindEvents() {
 
   els.prev.addEventListener("click", () => moveTarget(-1));
   els.next.addEventListener("click", () => moveTarget(1));
+  els.prevRoadmap.addEventListener("click", () => moveRoadmap(-1));
+  els.nextRoadmap.addEventListener("click", () => moveRoadmap(1));
   els.startFirst.addEventListener("click", () => {
     state.activeIndex = 0;
     renderTargets();
@@ -268,11 +273,18 @@ function bindEvents() {
   });
   els.reader.addEventListener("touchstart", handleTouchStart, { passive: true });
   els.reader.addEventListener("touchend", handleTouchEnd, { passive: true });
+  els.roadmapDetail.addEventListener("touchstart", handleTouchStart, { passive: true });
+  els.roadmapDetail.addEventListener("touchend", handleTouchEnd, { passive: true });
 
   window.addEventListener("keydown", (event) => {
-    if (state.activeView !== "targets") return;
-    if (event.key === "ArrowLeft") moveTarget(-1);
-    if (event.key === "ArrowRight") moveTarget(1);
+    if (state.activeView === "target-read") {
+      if (event.key === "ArrowLeft") moveTarget(-1);
+      if (event.key === "ArrowRight") moveTarget(1);
+    }
+    if (state.activeView === "roadmap-detail") {
+      if (event.key === "ArrowLeft") moveRoadmap(-1);
+      if (event.key === "ArrowRight") moveRoadmap(1);
+    }
   });
 }
 
@@ -318,6 +330,7 @@ function renderRoadmap() {
 
 function renderRoadmapDetail() {
   const phases = buildRoadmap();
+  state.activeRoadmapIndex = Math.max(0, Math.min(state.activeRoadmapIndex, phases.length - 1));
   const phase = phases[state.activeRoadmapIndex] || phases[0];
   els.roadmapDetail.innerHTML = `
     <header>
@@ -346,6 +359,16 @@ function renderRoadmapDetail() {
         </section>
       </div>
   `;
+  els.roadmapCount.textContent = `${state.activeRoadmapIndex + 1} / ${phases.length}`;
+  els.prevRoadmap.disabled = state.activeRoadmapIndex === 0;
+  els.nextRoadmap.disabled = state.activeRoadmapIndex === phases.length - 1;
+}
+
+function moveRoadmap(direction) {
+  const total = buildRoadmap().length;
+  if (!total) return;
+  state.activeRoadmapIndex = Math.max(0, Math.min(state.activeRoadmapIndex + direction, total - 1));
+  renderRoadmapDetail();
 }
 
 function buildRoadmap() {
@@ -589,13 +612,14 @@ function handleTouchStart(event) {
 }
 
 function handleTouchEnd(event) {
-  if (!state.touch.active || state.activeView !== "target-read") return;
+  if (!state.touch.active || !["target-read", "roadmap-detail"].includes(state.activeView)) return;
   const touch = event.changedTouches[0];
   const dx = touch.clientX - state.touch.startX;
   const dy = touch.clientY - state.touch.startY;
   state.touch.active = false;
   if (Math.abs(dx) < 58 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
-  moveTarget(dx < 0 ? 1 : -1);
+  if (state.activeView === "target-read") moveTarget(dx < 0 ? 1 : -1);
+  if (state.activeView === "roadmap-detail") moveRoadmap(dx < 0 ? 1 : -1);
 }
 
 function buildQuantityReasoning(item) {
