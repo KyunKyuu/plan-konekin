@@ -15,7 +15,7 @@ const state = {
   activeIndex: 0,
   activeMission: "keumatan",
   activeRoadmapIndex: 0,
-  activeMindmapId: "root",
+  activeMindmapId: "",
   mindmapQuery: "",
   mindmapFilter: "ALL",
   query: "",
@@ -798,10 +798,7 @@ function filteredEvaluationNodes() {
 
 function renderMindmap() {
   const nodes = filteredEvaluationNodes();
-  const active = evaluationNodes.find((node) => node.id === state.activeMindmapId) || evaluationNodes[0];
-  if (!nodes.some((node) => node.id === active.id) && nodes[0]) state.activeMindmapId = nodes[0].id;
-
-  els.mindmapVisual.innerHTML = nodes.length ? renderMindmapGroups(nodes) : `<div class="empty">Tidak ada node yang cocok.</div>`;
+  els.mindmapVisual.innerHTML = nodes.length ? renderMindmapConnections(nodes) : `<div class="empty">Tidak ada node yang cocok.</div>`;
 
   els.mindmapVisual.querySelectorAll("[data-node-id]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -814,53 +811,90 @@ function renderMindmap() {
   renderRelationTable();
 }
 
-function renderMindmapGroups(nodes) {
-  const groups = [
-    { type: "ROOT", title: "Pusat" },
-    { type: "BACKGROUND", title: "Latar" },
-    { type: "PROBLEM", title: "Masalah" },
-    { type: "SOLUTION", title: "Solusi" },
-    { type: "RELATION", title: "Benang merah" }
-  ];
+function renderMindmapConnections(nodes) {
+  const visibleTitles = new Set(nodes.map((node) => node.title));
+  const matchesQuery = (relation) => !state.mindmapQuery || `${relation.source} ${relation.relation} ${relation.target}`.toLowerCase().includes(state.mindmapQuery);
+  const relations = evaluationRelations.filter((relation) => (
+    (visibleTitles.has(relation.source) || visibleTitles.has(relation.target) || matchesQuery(relation))
+  ));
 
-  return groups
-    .map((group) => {
-      const groupNodes = nodes.filter((node) => node.type === group.type);
-      if (!groupNodes.length) return "";
-      return `
-        <section class="mindmap-group ${group.type.toLowerCase()}">
-          <header>
-            <span>${group.title}</span>
-            <b>${groupNodes.length}</b>
-          </header>
-          <div>
-            ${groupNodes.map((node) => `
-              <button class="mindmap-node ${node.type.toLowerCase()} ${node.id === state.activeMindmapId ? "active" : ""}" type="button" data-node-id="${node.id}">
-                <span>${evaluationTypeLabel[node.type]}</span>
-                <strong>${node.title}</strong>
-              </button>
-            `).join("")}
+  const rootNode = evaluationNodes.find((node) => node.type === "ROOT");
+  const root = rootNode && (state.mindmapFilter === "ALL" || state.mindmapFilter === "ROOT") ? `
+    <button class="mindmap-root-node" type="button" data-node-id="${rootNode.id}">
+      <span>${evaluationTypeLabel[rootNode.type]}</span>
+      <strong>${rootNode.title}</strong>
+    </button>
+  ` : "";
+
+  return `
+    ${root}
+    <div class="mindmap-connections">
+      ${relations.map((relation) => {
+        const source = findEvaluationNodeByTitle(relation.source);
+        const target = findEvaluationNodeByTitle(relation.target);
+        if (!source || !target) return "";
+        return `
+          <div class="mindmap-link">
+            ${renderConnectionNode(source)}
+            <span class="mindmap-line" data-relation="${relation.relation}">${formatRelationLabel(relation.relation)}</span>
+            ${renderConnectionNode(target)}
           </div>
-        </section>
-      `;
-    })
-    .join("");
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function renderConnectionNode(node) {
+  return `
+    <button class="mindmap-node ${node.type.toLowerCase()} ${node.id === state.activeMindmapId ? "active" : ""}" type="button" data-node-id="${node.id}">
+      <span>${evaluationTypeLabel[node.type]}</span>
+      <strong>${node.title}</strong>
+    </button>
+  `;
+}
+
+function findEvaluationNodeByTitle(title) {
+  return evaluationNodes.find((node) => node.title === title);
+}
+
+function formatRelationLabel(relation) {
+  const labels = {
+    CAUSES: "menyebabkan",
+    SOLVED_BY: "terjawab oleh",
+    SUPPORTED_BY: "didukung oleh",
+    RELATED_TO: "terkait"
+  };
+  return labels[relation] || relation;
 }
 
 function renderMindmapDetail() {
-  const node = evaluationNodes.find((item) => item.id === state.activeMindmapId) || evaluationNodes[0];
+  const node = evaluationNodes.find((item) => item.id === state.activeMindmapId);
+  if (!node) {
+    els.mindmapDetail.classList.remove("open");
+    els.mindmapDetail.innerHTML = "";
+    return;
+  }
+  els.mindmapDetail.classList.add("open");
   els.mindmapDetail.innerHTML = `
-    <span class="target-index">${evaluationTypeLabel[node.type]}</span>
-    <h3>${node.title}</h3>
-    <p>${node.description}</p>
-    <div class="mindmap-detail-grid">
-      ${renderMindmapDetailSection("Akar masalah", node.rootCause)}
-      ${renderMindmapDetailSection("Dampak", node.impact)}
-      ${renderMindmapDetailSection("Solusi terkait", node.solutions)}
-      ${renderMindmapDetailSection("Role terkait", node.roles)}
-      ${renderMindmapDetailSection("Tindak lanjut", node.followUp)}
+    <div class="mindmap-popup-card">
+      <button class="mindmap-close" type="button" aria-label="Tutup detail">Tutup</button>
+      <span class="target-index">${evaluationTypeLabel[node.type]}</span>
+      <h3>${node.title}</h3>
+      <p>${node.description}</p>
+      <div class="mindmap-detail-grid">
+        ${renderMindmapDetailSection("Akar masalah", node.rootCause)}
+        ${renderMindmapDetailSection("Dampak", node.impact)}
+        ${renderMindmapDetailSection("Solusi terkait", node.solutions)}
+        ${renderMindmapDetailSection("Role terkait", node.roles)}
+        ${renderMindmapDetailSection("Tindak lanjut", node.followUp)}
+      </div>
     </div>
   `;
+  els.mindmapDetail.querySelector(".mindmap-close").addEventListener("click", () => {
+    state.activeMindmapId = "";
+    renderMindmapDetail();
+  });
 }
 
 function renderMindmapDetailSection(title, content) {
