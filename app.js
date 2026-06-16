@@ -69,8 +69,7 @@ const els = {
   mindmapVisual: document.querySelector("#mindmap-visual"),
   mindmapDetail: document.querySelector("#mindmap-detail"),
   mindmapSearch: document.querySelector("#mindmap-search"),
-  mindmapFilter: document.querySelector("#mindmap-filter"),
-  relationTable: document.querySelector("#relation-table")
+  mindmapFilter: document.querySelector("#mindmap-filter")
 };
 
 const officerMapping = [
@@ -808,7 +807,6 @@ function renderMindmap() {
   });
 
   renderMindmapDetail();
-  renderRelationTable();
 }
 
 function renderMindmapConnections(nodes) {
@@ -922,23 +920,6 @@ function renderMindmapDetailSection(title, content) {
     ? `<div class="mindmap-tags">${content.map((item) => `<span>${item}</span>`).join("")}</div>`
     : `<p>${content}</p>`;
   return `<section><h4>${title}</h4>${body}</section>`;
-}
-
-function renderRelationTable() {
-  const relationLabel = {
-    CAUSES: "Menyebabkan",
-    SOLVED_BY: "Dijawab oleh",
-    SUPPORTED_BY: "Didukung oleh",
-    RELATED_TO: "Terkait"
-  };
-
-  els.relationTable.innerHTML = evaluationRelations.map((relation) => `
-    <div class="relation-row">
-      <strong>${relation.source}</strong>
-      <span>${relationLabel[relation.relation] || relation.relation}</span>
-      <b>${relation.target}</b>
-    </div>
-  `).join("");
 }
 
 function renderMapping() {
