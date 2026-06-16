@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Komunitas Konek.in</title>
-    <link rel="stylesheet" href="./styles.css?v=20260610-roadmap4" />
+    <link rel="stylesheet" href="./styles.css?v=20260616-mindmap1" />
   </head>
   <body>
     <header class="topbar">
@@ -21,6 +21,7 @@
       <nav class="dock" id="main-menu" aria-label="Navigasi">
         <button type="button" data-view="swat">Kondisi komunitas</button>
         <button type="button" data-view="roadmap">Arah 1 tahun</button>
+        <button type="button" data-view="mindmap">Mindmap</button>
         <button type="button" disabled aria-disabled="true">Peran penggerak</button>
         <button type="button" disabled aria-disabled="true">Target pembinaan</button>
       </nav>
@@ -45,13 +46,18 @@
             <strong>Arah 1 tahun</strong>
             <small>Baca rencana gerak per 3 bulan agar komunitas tumbuh bertahap.</small>
           </button>
-          <button class="path-card locked-card" type="button" disabled aria-disabled="true">
+          <button class="path-card" type="button" data-view="mindmap">
             <span>03</span>
+            <strong>Mindmap evaluasi</strong>
+            <small>Lihat hubungan masalah, akar masalah, solusi, role, dan benang merah program.</small>
+          </button>
+          <button class="path-card locked-card" type="button" disabled aria-disabled="true">
+            <span>04</span>
             <strong>Peran penggerak</strong>
             <small>Lihat pembagian peran, jumlah ideal, dan prioritas saat ada amanah ganda.</small>
           </button>
           <button class="path-card locked-card" type="button" disabled aria-disabled="true">
-            <span>04</span>
+            <span>05</span>
             <strong>Masuk target pembinaan</strong>
             <small>Fokus satu target per layar, lengkap dengan alasan jumlah dan langkah lanjut.</small>
           </button>
@@ -75,7 +81,7 @@
         <div class="screen-head">
           <button class="back-btn" type="button" data-view="menu">Kembali</button>
           <div>
-            <p class="eyebrow">Bagian 02</p>
+            <p class="eyebrow">Bagian 05</p>
             <h2>Target pembinaan</h2>
             <p>Pilih salah satu target. Kalau ingin membaca dari awal, tekan mulai dari target pertama.</p>
           </div>
@@ -124,7 +130,7 @@
         <div class="screen-head">
           <button class="back-btn" type="button" data-view="menu">Kembali</button>
           <div>
-            <p class="eyebrow">Bagian 03</p>
+            <p class="eyebrow">Bagian 04</p>
             <h2>Peran penggerak</h2>
             <p>Supaya target komunitas bisa tercapai, tiap penggerak perlu tahu perannya, jumlah idealnya, dan prioritas saat merangkap amanah.</p>
           </div>
@@ -138,12 +144,55 @@
         <div class="screen-head">
           <button class="back-btn" type="button" data-view="menu">Kembali</button>
           <div>
-            <p class="eyebrow">Bagian 04</p>
+            <p class="eyebrow">Bagian 02</p>
             <h2>Arah 1 tahun</h2>
             <p>Rencana ini dibagi per 3 bulan agar pertumbuhan komunitas bergerak bertahap: dari data, kedekatan, pembinaan, sampai stabilisasi.</p>
           </div>
         </div>
         <div class="roadmap-list" id="roadmap-list"></div>
+      </section>
+
+      <section class="screen mindmap-screen" id="screen-mindmap" aria-label="Mindmap evaluasi program">
+        <div class="screen-head">
+          <button class="back-btn" type="button" data-view="menu">Kembali</button>
+          <div>
+            <p class="eyebrow">Bagian 03</p>
+            <h2>Evaluasi Program Sales</h2>
+            <p>Mindmap masalah, solusi, dan benang merah gerakan agar evaluasi program lebih terarah.</p>
+          </div>
+        </div>
+
+        <section class="mindmap-summary">
+          <h3>Garis merah</h3>
+          <p>Pengurus mulai melemah karena overload, sehingga pembinaan member ikut melemah. Di sisi lain, member baru sebenarnya sudah ada, tetapi belum bergerak karena belum terbentuk kesadaran peran. Komunikasi yang pasif membuat kendala tidak cepat terbaca, sementara kurangnya sumber inspirasi membuat program mudah terasa mentok. Karena itu, penguatan internal pengurus, pembinaan katim kepada member, portal report sales, serta pencarian inspirasi dari struktur atas atau tempat lain menjadi bagian penting sebelum program bisa jor-joran mencari CK secara masif.</p>
+        </section>
+
+        <div class="mindmap-controls">
+          <label>
+            <span>Cari node</span>
+            <input id="mindmap-search" type="search" placeholder="Ketik komunikasi, katim, CK..." />
+          </label>
+          <label>
+            <span>Filter tipe</span>
+            <select id="mindmap-filter">
+              <option value="ALL">Semua</option>
+              <option value="BACKGROUND">Latar Belakang</option>
+              <option value="PROBLEM">Masalah</option>
+              <option value="SOLUTION">Solusi</option>
+              <option value="RELATION">Benang Merah</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="mindmap-layout">
+          <div class="mindmap-visual" id="mindmap-visual" aria-label="Node mindmap evaluasi"></div>
+          <aside class="mindmap-detail" id="mindmap-detail" aria-live="polite"></aside>
+        </div>
+
+        <section class="relation-section">
+          <h3>Relasi masalah dan solusi</h3>
+          <div class="relation-table" id="relation-table"></div>
+        </section>
       </section>
 
       <section class="screen roadmap-detail-screen" id="screen-roadmap-detail" aria-label="Detail arah 1 tahun">
@@ -160,7 +209,7 @@
       </section>
     </main>
 
-    <script src="./data.js?v=20260610-roadmap4"></script>
-    <script src="./app.js?v=20260610-roadmap4"></script>
+    <script src="./data.js?v=20260616-mindmap1"></script>
+    <script src="./app.js?v=20260616-mindmap1"></script>
   </body>
 </html>

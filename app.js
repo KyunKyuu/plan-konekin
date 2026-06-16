@@ -15,6 +15,9 @@ const state = {
   activeIndex: 0,
   activeMission: "keumatan",
   activeRoadmapIndex: 0,
+  activeMindmapId: "root",
+  mindmapQuery: "",
+  mindmapFilter: "ALL",
   query: "",
   sort: "priority",
   touch: { startX: 0, startY: 0, active: false }
@@ -62,7 +65,12 @@ const els = {
   roadmapDetail: document.querySelector("#roadmap-detail"),
   prevRoadmap: document.querySelector("#prev-roadmap"),
   nextRoadmap: document.querySelector("#next-roadmap"),
-  roadmapCount: document.querySelector("#roadmap-count")
+  roadmapCount: document.querySelector("#roadmap-count"),
+  mindmapVisual: document.querySelector("#mindmap-visual"),
+  mindmapDetail: document.querySelector("#mindmap-detail"),
+  mindmapSearch: document.querySelector("#mindmap-search"),
+  mindmapFilter: document.querySelector("#mindmap-filter"),
+  relationTable: document.querySelector("#relation-table")
 };
 
 const officerMapping = [
@@ -154,6 +162,314 @@ const officerMapping = [
   }
 ];
 
+const evaluationTypeLabel = {
+  ROOT: "Root",
+  BACKGROUND: "Latar Belakang",
+  PROBLEM: "Masalah",
+  SOLUTION: "Solusi",
+  RELATION: "Benang Merah"
+};
+
+const evaluationNodes = [
+  {
+    id: "root",
+    title: "Evaluasi Program Sales",
+    type: "ROOT",
+    description: "Pusat baca evaluasi program: latar belakang, masalah, solusi, role, dan benang merah gerakan.",
+    rootCause: "Masalah program tidak berdiri sendiri. Ada hubungan antara pengurus, member, komunikasi, inspirasi, dan suasana gerak.",
+    impact: "Tanpa peta hubungan, evaluasi mudah terasa terpisah-pisah dan tindak lanjut tidak fokus.",
+    solutions: ["Baca node per kategori", "Lihat relasi masalah ke solusi", "Pilih prioritas perbaikan"],
+    roles: ["URPIM", "Kaur", "Kapten", "Katim", "Member"],
+    followUp: "Gunakan mindmap ini sebagai bahan evaluasi rutin sebelum menentukan program lanjutan.",
+    order: 0
+  },
+  {
+    id: "member-baru-belum-bergerak",
+    title: "Member Baru Sudah Ada Tapi Belum Bergerak",
+    type: "BACKGROUND",
+    description: "Member baru secara jumlah sudah ada, tetapi belum otomatis aktif, belum berani mengumpulkan orang, dan belum merasa punya tanggung jawab langsung.",
+    rootCause: "Member belum memahami perannya, belum terbiasa bergerak tanpa disuruh, dan pembinaan katim belum cukup kuat.",
+    impact: "Jumlah member tidak otomatis menjadi kekuatan gerak. Beban sales tetap bertumpu pada orang lama.",
+    solutions: ["Katim Aktif Membina Member", "Membagi Kaur Dakwah dan Kaur Bina"],
+    roles: ["Katim", "Kaur Bina", "Member"],
+    followUp: "Katim mulai mapping member, mengajak bertahap, dan membiasakan member membawa orang.",
+    order: 1
+  },
+  {
+    id: "pengurus-mulai-melemah",
+    title: "Pengurus Mulai Melemah",
+    type: "BACKGROUND",
+    description: "Pengurus mulai melemah dari sisi semangat, komunikasi, kedisiplinan, dan inisiatif karena beban gerak setahun ke belakang.",
+    rootCause: "Beban terlalu lama bertumpu pada pengurus, pembagian peran belum jelas, dan wadah penguatan internal belum maksimal.",
+    impact: "Pembinaan member ikut melemah dan program terasa berat sebelum siap bergerak masif.",
+    solutions: ["Perkuat Internal Pengurus", "Budaya Komunikasi Aktif"],
+    roles: ["URPIM", "KMA", "Kaur"],
+    followUp: "Dahulukan penguatan internal sebelum menekan pencarian CK secara besar.",
+    order: 2
+  },
+  {
+    id: "butuh-inspirasi",
+    title: "Butuh Inspirasi dan Contoh",
+    type: "BACKGROUND",
+    description: "Program terasa mentok ketika pengurus merasa bergerak sendiri dan tidak punya contoh gerakan yang bisa dipelajari.",
+    rootCause: "Kurang mencari arahan dari struktur atas dan kurang belajar dari tempat lain.",
+    impact: "Program terasa buntu, ide terbatas, dan pengurus mudah kehilangan arah.",
+    solutions: ["Aktif Mencari Arahan dan Inspirasi"],
+    roles: ["URPIM", "Kaur", "Katim"],
+    followUp: "Kumpulkan contoh program dari Kasi, KMA, KMU, atau KMA lain.",
+    order: 3
+  },
+  {
+    id: "komunikasi-pasif",
+    title: "Komunikasi Pasif",
+    type: "PROBLEM",
+    description: "Komunikasi antar struktural, katim ke member, kapten ke player, dan player ke kapten masih pasif.",
+    rootCause: "Informasi tertahan di orang tertentu dan tidak ada ruang report yang terlihat bersama.",
+    impact: "Kendala lambat diketahui, arahan tidak merata, dan program sulit dievaluasi.",
+    solutions: ["Portal Report Sales", "Budaya Komunikasi Aktif", "Aktif Mencari Arahan dan Inspirasi"],
+    roles: ["URPIM", "Kapten", "Katim", "Member"],
+    followUp: "Buka portal report sederhana dan biasakan laporan singkat yang bisa dibaca struktur terkait.",
+    order: 4
+  },
+  {
+    id: "member-sales-pasif",
+    title: "Member Sales Pasif",
+    type: "PROBLEM",
+    description: "Member sales, baik senior maupun member baru, masih banyak yang belum aktif bergerak secara mandiri.",
+    rootCause: "Belum terbina, belum punya contoh, belum tahu peran, dan belum merasa menjadi bagian dari perjuangan.",
+    impact: "Beban program bertumpu pada sedikit orang dan gerakan tidak menyebar ke banyak titik.",
+    solutions: ["Katim Aktif Membina Member", "URPIM Menjadi Contoh"],
+    roles: ["Katim", "Member", "Kaur Bina"],
+    followUp: "Bina member lewat tugas kecil, contoh langsung, dan report yang terlihat.",
+    order: 5
+  },
+  {
+    id: "kesadaran-mandiri-lemah",
+    title: "Kesadaran Mandiri Lemah",
+    type: "PROBLEM",
+    description: "Sebagian anggota belum memiliki kesadaran untuk mengambil peran tanpa harus disuruh.",
+    rootCause: "Terbiasa menunggu instruksi dan belum ada suasana yang membentuk tanggung jawab personal.",
+    impact: "Jika tidak diingatkan, gerakan berhenti dan struktur terlihat ada tetapi fungsi tidak hidup.",
+    solutions: ["URPIM Menjadi Contoh", "Katim Aktif Membina Member", "Membagi Kaur Dakwah dan Kaur Bina"],
+    roles: ["URPIM", "Katim", "Kaur Bina"],
+    followUp: "Bentuk kesadaran lewat contoh, pembinaan, komunikasi, dan amanah kecil.",
+    order: 6
+  },
+  {
+    id: "sulit-ck",
+    title: "Sulit Mencari CK Mahasiswa Aktif",
+    type: "PROBLEM",
+    description: "Sales yang sudah lulus mulai kesulitan mencari CK mahasiswa aktif karena akses kampus berkurang.",
+    rootCause: "Pencarian CK masih bertumpu pada orang lama yang akses kampusnya mulai terbatas.",
+    impact: "CK potensial dari mahasiswa aktif tidak tergarap maksimal.",
+    solutions: ["Katim Aktif Membina Member", "Portal Report Sales"],
+    roles: ["Katim", "Member", "Sales Lulus"],
+    followUp: "Katim membantu member yang masih dekat dengan mahasiswa aktif agar berani membawa CK.",
+    order: 7
+  },
+  {
+    id: "pengurus-overload",
+    title: "Pengurus Lelah dan Overload",
+    type: "PROBLEM",
+    description: "Pengurus melemah karena beban gerak selama setahun ke belakang cukup berat.",
+    rootCause: "Beban kerja belum terbagi rapi dan ritme penguatan internal belum cukup.",
+    impact: "Komunikasi menurun, disiplin internal melemah, dan pembinaan member tidak maksimal.",
+    solutions: ["Perkuat Internal Pengurus", "Budaya Komunikasi Aktif"],
+    roles: ["URPIM", "KMA", "Kaur"],
+    followUp: "Evaluasi beban kerja, rapikan komunikasi, dan pulihkan semangat sebelum gerak keluar masif.",
+    order: 8
+  },
+  {
+    id: "dakwah-bina-belum-terarah",
+    title: "Peran Dakwah dan Bina Belum Terarah",
+    type: "PROBLEM",
+    description: "Fungsi arah dakwah dan pembinaan masih perlu dipisahkan agar kerja lebih fokus.",
+    rootCause: "Satu orang terlalu banyak menanggung fungsi dan pembinaan member belum terpantau rapi.",
+    impact: "Program bisa ramai secara aktivitas tetapi lemah secara isi dan pembentukan orang.",
+    solutions: ["Membagi Kaur Dakwah dan Kaur Bina"],
+    roles: ["Kaur Dakwah", "Kaur Bina"],
+    followUp: "Pisahkan fokus Kaur Dakwah untuk narasi dan Kaur Bina untuk pembinaan member.",
+    order: 9
+  },
+  {
+    id: "kurang-inspirasi",
+    title: "Kurang Inspirasi dan Contoh",
+    type: "PROBLEM",
+    description: "Program mudah terasa mentok karena kurang sumber inspirasi dan contoh gerakan.",
+    rootCause: "Terlalu banyak dipikir sendiri dari nol dan jarang mencari pola yang sudah berjalan.",
+    impact: "Pengurus merasa bergerak sendiri dan ide program tidak berkembang.",
+    solutions: ["Aktif Mencari Arahan dan Inspirasi"],
+    roles: ["URPIM", "Kaur", "Katim"],
+    followUp: "Jadwalkan belajar dari Kasi, KMA, KMU, atau KMA lain.",
+    order: 10
+  },
+  {
+    id: "vibe-lemah",
+    title: "Vibe Perjuangan Belum Kuat",
+    type: "PROBLEM",
+    description: "Gerakan masih terasa teknis dan belum cukup terasa sebagai perjuangan bersama.",
+    rootCause: "Makna gerak belum cukup hidup, report kaku, dan member belum merasa dilibatkan.",
+    impact: "Member merasa hanya diberi tugas dan mudah lelah karena tidak merasakan makna gerak.",
+    solutions: ["Membangun Vibe Perjuangan", "Membagi Kaur Dakwah dan Kaur Bina", "URPIM Menjadi Contoh"],
+    roles: ["Kaur Dakwah", "URPIM", "Katim"],
+    followUp: "Buat narasi perjuangan, angkat cerita positif, dan jadikan report sebagai penguat semangat.",
+    order: 11
+  },
+  {
+    id: "perkuat-internal",
+    title: "Perkuat Internal Pengurus",
+    type: "SOLUTION",
+    description: "Menguatkan kembali pengurus sebelum mendorong gerakan keluar secara masif.",
+    rootCause: "Internal yang lemah membuat pembinaan dan pencarian CK ikut rapuh.",
+    impact: "Jika dilakukan, struktur, SDM, dan wadah menjadi lebih siap untuk gerak keluar.",
+    solutions: ["Rapikan komunikasi", "Kuatkan disiplin", "Perjelas pembagian peran"],
+    roles: ["URPIM", "KMA", "Kaur"],
+    followUp: "Hidupkan forum internal dan evaluasi beban kerja pengurus.",
+    order: 12
+  },
+  {
+    id: "portal-report",
+    title: "Portal Report Sales",
+    type: "SOLUTION",
+    description: "Membuka komunikasi dan report sales agar informasi tidak tertahan di kapten atau orang tertentu.",
+    rootCause: "Informasi lapangan tertutup dan kendala lambat diketahui.",
+    impact: "Progress terlihat bersama, kendala cepat ditindaklanjuti, dan report menjadi pemantik semangat.",
+    solutions: ["Report mingguan", "Status kendala", "Catatan follow-up"],
+    roles: ["Kapten", "Katim", "Member"],
+    followUp: "Buat format report sederhana yang bisa dibaca struktur terkait.",
+    order: 13
+  },
+  {
+    id: "katim-bina-member",
+    title: "Katim Aktif Membina Member",
+    type: "SOLUTION",
+    description: "Katim tidak hanya bergerak sebagai sales pribadi, tetapi juga membina member agar sadar peran.",
+    rootCause: "Member tidak otomatis bergerak tanpa pembinaan dan contoh.",
+    impact: "Member mulai berani mengumpulkan orang dan pencarian CK tidak hanya bertumpu pada sales lama.",
+    solutions: ["Katim menjadi PG", "Member menjadi PH", "Amanah kecil bertahap"],
+    roles: ["Katim", "Member", "Kaur Bina"],
+    followUp: "Katim mapping member dan mengawal CK sampai siap sempro.",
+    order: 14
+  },
+  {
+    id: "urpim-contoh",
+    title: "URPIM Menjadi Contoh",
+    type: "SOLUTION",
+    description: "URPIM menjadi standar gerak lewat komunikasi aktif, disiplin report, dan inisiatif.",
+    rootCause: "Kesadaran mandiri sulit terbentuk jika struktur atas tidak memberi contoh.",
+    impact: "Member dan pengurus punya role model gerak yang jelas.",
+    solutions: ["Aktif komunikasi", "Disiplin report", "Berinisiatif"],
+    roles: ["URPIM"],
+    followUp: "Tampilkan standar gerak yang bisa ditiru oleh katim dan member.",
+    order: 15
+  },
+  {
+    id: "budaya-komunikasi",
+    title: "Budaya Komunikasi Aktif",
+    type: "SOLUTION",
+    description: "Membiasakan semua elemen untuk tidak membiarkan masalah terlalu lama.",
+    rootCause: "Masalah sering tertahan karena orang menunggu ditanya atau takut menyampaikan kendala.",
+    impact: "Kendala cepat terbaca dan program tidak macet diam-diam.",
+    solutions: ["Cepat bertanya", "Cepat meminta arahan", "Saling mengingatkan"],
+    roles: ["URPIM", "Kapten", "Katim", "Member"],
+    followUp: "Buat kebiasaan laporan pendek ketika bingung, macet, atau butuh bantuan.",
+    order: 16
+  },
+  {
+    id: "cari-inspirasi",
+    title: "Aktif Mencari Arahan dan Inspirasi",
+    type: "SOLUTION",
+    description: "Membuka sumber ide agar program tidak mentok dan pengurus tidak merasa bergerak sendiri.",
+    rootCause: "Tidak semua pola harus dipikir dari nol oleh tim sendiri.",
+    impact: "Program punya ide baru dan struktur tidak merasa sendirian.",
+    solutions: ["Bertanya ke Kasi", "Bertanya ke KMA", "Belajar dari KMU atau KMA lain"],
+    roles: ["URPIM", "Kaur", "Katim"],
+    followUp: "Kumpulkan contoh program yang bisa ditiru dan disesuaikan.",
+    order: 17
+  },
+  {
+    id: "bagi-kaur",
+    title: "Membagi Kaur Dakwah dan Kaur Bina",
+    type: "SOLUTION",
+    description: "Memisahkan fokus dakwah dan pembinaan agar kerja lebih terarah.",
+    rootCause: "Arah dakwah dan pembinaan member butuh fokus yang berbeda.",
+    impact: "Kaur Dakwah menjaga isi perjuangan, Kaur Bina menjaga proses pembentukan anggota.",
+    solutions: ["Kaur Dakwah fokus narasi", "Kaur Bina fokus pembinaan"],
+    roles: ["Kaur Dakwah", "Kaur Bina"],
+    followUp: "Tentukan PIC terpisah dan indikator kerja masing-masing.",
+    order: 18
+  },
+  {
+    id: "vibe-perjuangan",
+    title: "Membangun Vibe Perjuangan",
+    type: "SOLUTION",
+    description: "Mengubah program dari aktivitas teknis menjadi gerakan yang terasa hidup, jelas, dan bermakna.",
+    rootCause: "Program yang hanya terasa tugas akan melelahkan dan tidak membentuk rasa memiliki.",
+    impact: "Member merasa dilibatkan dan melihat makna di balik aktivitas sales.",
+    solutions: ["Narasi perjuangan", "Report yang tidak kaku", "Cerita gerakan positif"],
+    roles: ["Kaur Dakwah", "URPIM", "Katim"],
+    followUp: "Bangun suasana evaluasi sebagai ruang saling menguatkan.",
+    order: 19
+  },
+  {
+    id: "rel-pengurus-internal",
+    title: "Pengurus Melemah ke Penguatan Internal",
+    type: "RELATION",
+    description: "Pengurus perlu diperkuat sebelum membina member dan sebelum gerakan keluar dimasifkan.",
+    roles: ["URPIM", "KMA", "Kaur"],
+    followUp: "Prioritaskan disiplin internal sebagai dasar gerak keluar.",
+    order: 20
+  },
+  {
+    id: "rel-member-katim",
+    title: "Member Baru Belum Bergerak ke Pembinaan Katim",
+    type: "RELATION",
+    description: "Member baru perlu diarahkan oleh katim agar sadar peran dan mulai bergerak bertahap.",
+    roles: ["Katim", "Kaur Bina", "Member"],
+    followUp: "Katim memberi amanah kecil dan mengawal progres member.",
+    order: 21
+  },
+  {
+    id: "rel-komunikasi-report",
+    title: "Komunikasi Pasif ke Portal Report Sales",
+    type: "RELATION",
+    description: "Portal report membuka informasi, membuat kendala cepat terlihat, dan memudahkan tindak lanjut.",
+    roles: ["Kapten", "Katim", "Member"],
+    followUp: "Buat report terbuka untuk struktur terkait.",
+    order: 22
+  },
+  {
+    id: "rel-vibe-ruh",
+    title: "Vibe Perjuangan sebagai Ruh Program",
+    type: "RELATION",
+    description: "Semua solusi perlu mengarah pada suasana gerak yang hidup agar program tidak terasa hanya sebagai tugas.",
+    roles: ["Kaur Dakwah", "URPIM", "Katim"],
+    followUp: "Jaga narasi dan suasana agar member merasa menjadi bagian dari perjuangan bersama.",
+    order: 23
+  }
+];
+
+const evaluationRelations = [
+  ["Pengurus Mulai Melemah", "CAUSES", "Pengurus Lelah dan Overload"],
+  ["Pengurus Lelah dan Overload", "SOLVED_BY", "Perkuat Internal Pengurus"],
+  ["Member Baru Sudah Ada Tapi Belum Bergerak", "CAUSES", "Member Sales Pasif"],
+  ["Member Sales Pasif", "SOLVED_BY", "Katim Aktif Membina Member"],
+  ["Member Sales Pasif", "SUPPORTED_BY", "URPIM Menjadi Contoh"],
+  ["Kesadaran Mandiri Lemah", "SOLVED_BY", "URPIM Menjadi Contoh"],
+  ["Kesadaran Mandiri Lemah", "SUPPORTED_BY", "Katim Aktif Membina Member"],
+  ["Kesadaran Mandiri Lemah", "SUPPORTED_BY", "Membagi Kaur Dakwah dan Kaur Bina"],
+  ["Komunikasi Pasif", "SOLVED_BY", "Portal Report Sales"],
+  ["Komunikasi Pasif", "SUPPORTED_BY", "Budaya Komunikasi Aktif"],
+  ["Komunikasi Pasif", "SUPPORTED_BY", "Aktif Mencari Arahan dan Inspirasi"],
+  ["Sulit Mencari CK Mahasiswa Aktif", "SOLVED_BY", "Katim Aktif Membina Member"],
+  ["Sulit Mencari CK Mahasiswa Aktif", "SUPPORTED_BY", "Portal Report Sales"],
+  ["Peran Dakwah dan Bina Belum Terarah", "SOLVED_BY", "Membagi Kaur Dakwah dan Kaur Bina"],
+  ["Kurang Inspirasi dan Contoh", "SOLVED_BY", "Aktif Mencari Arahan dan Inspirasi"],
+  ["Vibe Perjuangan Belum Kuat", "SOLVED_BY", "Membangun Vibe Perjuangan"],
+  ["Vibe Perjuangan Belum Kuat", "SUPPORTED_BY", "Membagi Kaur Dakwah dan Kaur Bina"],
+  ["Vibe Perjuangan Belum Kuat", "SUPPORTED_BY", "URPIM Menjadi Contoh"]
+].map(([source, relation, target], index) => ({ id: `relation-${index + 1}`, source, relation, target }));
+
 async function boot() {
   if (window.PLANNING_DATA) {
     state.data = window.PLANNING_DATA;
@@ -171,6 +487,7 @@ async function boot() {
   renderTargets();
   renderMapping();
   renderRoadmap();
+  renderMindmap();
   setView(location.hash?.replace("#", "") || "menu", false);
 }
 
@@ -227,6 +544,16 @@ function bindEvents() {
   els.filterToggle.addEventListener("click", () => {
     const isOpen = els.targetFilter.classList.toggle("open");
     els.filterToggle.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  els.mindmapSearch.addEventListener("input", (event) => {
+    state.mindmapQuery = event.target.value.trim().toLowerCase();
+    renderMindmap();
+  });
+
+  els.mindmapFilter.addEventListener("change", (event) => {
+    state.mindmapFilter = event.target.value;
+    renderMindmap();
   });
 
   els.missionTabs.addEventListener("click", (event) => {
@@ -289,7 +616,7 @@ function bindEvents() {
 }
 
 function setView(view, updateHash = true) {
-  const allowed = ["menu", "swat", "targets", "target-read", "mapping", "roadmap", "roadmap-detail"];
+  const allowed = ["menu", "swat", "targets", "target-read", "mapping", "roadmap", "roadmap-detail", "mindmap"];
   state.activeView = allowed.includes(view) ? view : "menu";
   document.querySelectorAll(".screen").forEach((screen) => {
     screen.classList.toggle("active", screen.id === `screen-${state.activeView}`);
@@ -449,6 +776,89 @@ function buildRoadmap() {
       fallback: "Jika evaluasi belum lengkap, prioritaskan tiga data inti: pengurus aktif, member potensial, dan program yang paling berdampak."
     }
   ];
+}
+
+function filteredEvaluationNodes() {
+  return evaluationNodes
+    .filter((node) => state.mindmapFilter === "ALL" || node.type === state.mindmapFilter)
+    .filter((node) => {
+      if (!state.mindmapQuery) return true;
+      return [
+        node.title,
+        evaluationTypeLabel[node.type],
+        node.description,
+        node.rootCause,
+        node.impact,
+        ...(node.solutions || []),
+        ...(node.roles || [])
+      ].join(" ").toLowerCase().includes(state.mindmapQuery);
+    })
+    .sort((a, b) => a.order - b.order);
+}
+
+function renderMindmap() {
+  const nodes = filteredEvaluationNodes();
+  const active = evaluationNodes.find((node) => node.id === state.activeMindmapId) || evaluationNodes[0];
+  if (!nodes.some((node) => node.id === active.id) && nodes[0]) state.activeMindmapId = nodes[0].id;
+
+  els.mindmapVisual.innerHTML = nodes.length ? nodes.map((node) => `
+    <button class="mindmap-node ${node.type.toLowerCase()} ${node.id === state.activeMindmapId ? "active" : ""}" type="button" data-node-id="${node.id}">
+      <span>${evaluationTypeLabel[node.type]}</span>
+      <strong>${node.title}</strong>
+      <small>${node.description}</small>
+    </button>
+  `).join("") : `<div class="empty">Tidak ada node yang cocok.</div>`;
+
+  els.mindmapVisual.querySelectorAll("[data-node-id]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.activeMindmapId = button.dataset.nodeId;
+      renderMindmap();
+    });
+  });
+
+  renderMindmapDetail();
+  renderRelationTable();
+}
+
+function renderMindmapDetail() {
+  const node = evaluationNodes.find((item) => item.id === state.activeMindmapId) || evaluationNodes[0];
+  els.mindmapDetail.innerHTML = `
+    <span class="target-index">${evaluationTypeLabel[node.type]}</span>
+    <h3>${node.title}</h3>
+    <p>${node.description}</p>
+    <div class="mindmap-detail-grid">
+      ${renderMindmapDetailSection("Akar masalah", node.rootCause)}
+      ${renderMindmapDetailSection("Dampak", node.impact)}
+      ${renderMindmapDetailSection("Solusi terkait", node.solutions)}
+      ${renderMindmapDetailSection("Role terkait", node.roles)}
+      ${renderMindmapDetailSection("Tindak lanjut", node.followUp)}
+    </div>
+  `;
+}
+
+function renderMindmapDetailSection(title, content) {
+  if (!content || (Array.isArray(content) && !content.length)) return "";
+  const body = Array.isArray(content)
+    ? `<div class="mindmap-tags">${content.map((item) => `<span>${item}</span>`).join("")}</div>`
+    : `<p>${content}</p>`;
+  return `<section><h4>${title}</h4>${body}</section>`;
+}
+
+function renderRelationTable() {
+  const relationLabel = {
+    CAUSES: "Menyebabkan",
+    SOLVED_BY: "Dijawab oleh",
+    SUPPORTED_BY: "Didukung oleh",
+    RELATED_TO: "Terkait"
+  };
+
+  els.relationTable.innerHTML = evaluationRelations.map((relation) => `
+    <div class="relation-row">
+      <strong>${relation.source}</strong>
+      <span>${relationLabel[relation.relation] || relation.relation}</span>
+      <b>${relation.target}</b>
+    </div>
+  `).join("");
 }
 
 function renderMapping() {
