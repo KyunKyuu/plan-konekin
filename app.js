@@ -801,13 +801,7 @@ function renderMindmap() {
   const active = evaluationNodes.find((node) => node.id === state.activeMindmapId) || evaluationNodes[0];
   if (!nodes.some((node) => node.id === active.id) && nodes[0]) state.activeMindmapId = nodes[0].id;
 
-  els.mindmapVisual.innerHTML = nodes.length ? nodes.map((node) => `
-    <button class="mindmap-node ${node.type.toLowerCase()} ${node.id === state.activeMindmapId ? "active" : ""}" type="button" data-node-id="${node.id}">
-      <span>${evaluationTypeLabel[node.type]}</span>
-      <strong>${node.title}</strong>
-      <small>${node.description}</small>
-    </button>
-  `).join("") : `<div class="empty">Tidak ada node yang cocok.</div>`;
+  els.mindmapVisual.innerHTML = nodes.length ? renderMindmapGroups(nodes) : `<div class="empty">Tidak ada node yang cocok.</div>`;
 
   els.mindmapVisual.querySelectorAll("[data-node-id]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -818,6 +812,39 @@ function renderMindmap() {
 
   renderMindmapDetail();
   renderRelationTable();
+}
+
+function renderMindmapGroups(nodes) {
+  const groups = [
+    { type: "ROOT", title: "Pusat" },
+    { type: "BACKGROUND", title: "Latar" },
+    { type: "PROBLEM", title: "Masalah" },
+    { type: "SOLUTION", title: "Solusi" },
+    { type: "RELATION", title: "Benang merah" }
+  ];
+
+  return groups
+    .map((group) => {
+      const groupNodes = nodes.filter((node) => node.type === group.type);
+      if (!groupNodes.length) return "";
+      return `
+        <section class="mindmap-group ${group.type.toLowerCase()}">
+          <header>
+            <span>${group.title}</span>
+            <b>${groupNodes.length}</b>
+          </header>
+          <div>
+            ${groupNodes.map((node) => `
+              <button class="mindmap-node ${node.type.toLowerCase()} ${node.id === state.activeMindmapId ? "active" : ""}" type="button" data-node-id="${node.id}">
+                <span>${evaluationTypeLabel[node.type]}</span>
+                <strong>${node.title}</strong>
+              </button>
+            `).join("")}
+          </div>
+        </section>
+      `;
+    })
+    .join("");
 }
 
 function renderMindmapDetail() {
