@@ -826,19 +826,38 @@ function renderMindmapConnections(nodes) {
     </button>
   ` : "";
 
+  const groupedRelations = relations.reduce((groups, relation) => {
+    if (!groups.has(relation.source)) groups.set(relation.source, []);
+    groups.get(relation.source).push(relation);
+    return groups;
+  }, new Map());
+
   return `
     ${root}
-    <div class="mindmap-connections">
-      ${relations.map((relation) => {
-        const source = findEvaluationNodeByTitle(relation.source);
-        const target = findEvaluationNodeByTitle(relation.target);
-        if (!source || !target) return "";
+    <div class="mindmap-flow-list">
+      ${Array.from(groupedRelations.entries()).map(([sourceTitle, sourceRelations], index) => {
+        const source = findEvaluationNodeByTitle(sourceTitle);
+        if (!source) return "";
         return `
-          <div class="mindmap-link">
+          <section class="mindmap-flow">
+            <header>
+              <span>Alur ${String(index + 1).padStart(2, "0")}</span>
+              <b>${sourceRelations.length} relasi</b>
+            </header>
             ${renderConnectionNode(source)}
-            <span class="mindmap-line" data-relation="${relation.relation}">${formatRelationLabel(relation.relation)}</span>
-            ${renderConnectionNode(target)}
-          </div>
+            <div class="mindmap-branches">
+              ${sourceRelations.map((relation) => {
+                const target = findEvaluationNodeByTitle(relation.target);
+                if (!target) return "";
+                return `
+                  <div class="mindmap-branch">
+                    <span class="mindmap-line" data-relation="${relation.relation}">${formatRelationLabel(relation.relation)}</span>
+                    ${renderConnectionNode(target)}
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </section>
         `;
       }).join("")}
     </div>
